@@ -20,5 +20,7 @@ if [ -n "$TS_AUTHKEY" ]; then
         ${TS_EXTRA_ARGS}
 fi
 
-# Keep the container alive
-tail -f /dev/null
+# Start the ticket bridge (Telegram + Discord). Runs as PID 1 so the container
+# stops on crash and Docker's restart policy brings it back up.
+cd /app
+exec node src/index.js

@@ -13,6 +13,7 @@ services:
       - .env
     volumes:
       - tailscale-state:/var/lib/tailscale   # keeps your node identity across restarts
+      - runtime:/app/runtime                 # keeps the ticket counter across restarts
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -26,3 +27,4 @@ services:
 
 volumes:
   tailscale-state:
+  runtime:

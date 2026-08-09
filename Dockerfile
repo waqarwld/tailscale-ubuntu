@@ -11,6 +11,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get update && apt-get install -y --no-install-recommends tailscale \
     && rm -rf /var/lib/apt/lists/*
 
+# Telegram <-> Discord ticket bridge
+WORKDIR /app
+COPY package.json ./
+RUN npm install --omit=dev
+COPY src ./src
+# Ticket counter persists via a named volume mounted at /app/runtime
+RUN mkdir -p /app/runtime
+
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
