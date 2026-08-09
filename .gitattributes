@@ -1,0 +1,8 @@
+# Normalize line endings: force LF for shell scripts and container files so
+# they behave identically regardless of the clone machine's autocrlf setting.
+* text=auto
+*.sh text eol=lf
+Dockerfile text eol=lf
+.dockerignore text eol=lf
+.gitignore text eol=lf
+.env.example text eol=lf
