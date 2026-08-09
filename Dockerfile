@@ -1,12 +1,12 @@
-FROM node:26.7.0-noble
+FROM node:26.7.0-slim
 
-
-# Install tailscale from the official repo
+# Install tailscale from the official repo (Debian variant; node:slim is Debian-based)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         curl ca-certificates gnupg \
-    && curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/noble.noarmor.gpg \
+    && . /etc/os-release \
+    && curl -fsSL "https://pkgs.tailscale.com/stable/debian/${VERSION_CODENAME}.noarmor.gpg" \
         | gpg --dearmor -o /usr/share/keyrings/tailscale-archive-keyring.gpg \
-    && echo "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/ubuntu noble main" \
+    && echo "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/debian ${VERSION_CODENAME} main" \
         > /etc/apt/sources.list.d/tailscale.list \
     && apt-get update && apt-get install -y --no-install-recommends tailscale \
     && rm -rf /var/lib/apt/lists/*
