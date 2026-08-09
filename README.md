@@ -131,7 +131,7 @@ This repo is also a ready-to-run Docker deployment: **one container** runs both 
 2. Clone this branch:
 
    ```bash
-   git clone -b tailscale_nodejs git@github.com:waqarwld/tailscale-ubuntu.git
+   git clone -b tailscale_nodejs https://github.com/waqarwld/tailscale-ubuntu.git
    cd tailscale-ubuntu
    ```
 
