@@ -1,4 +1,4 @@
-FROM node:26.7.0-slim
+FROM node:26.7.0-noble
 
 
 # Install tailscale from the official repo
