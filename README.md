@@ -120,3 +120,50 @@ Do not run the laptop copy and VPS copy simultaneously. Telegram long polling sh
 - [ ] Media tested
 - [ ] VPS systemd service tested
 - [ ] Laptop bot stopped before VPS starts
+
+## Deploy on another machine (Docker container)
+
+This repo is also a ready-to-run Docker deployment: **one container** runs both Tailscale (so the machine is on your tailnet) and the Telegram ⇄ Discord ticket bridge. This replaces the VPS/systemd setup above.
+
+### On the new machine
+
+1. Install **Docker** + **Docker Compose** (Docker Desktop covers both).
+2. Clone this branch:
+
+   ```bash
+   git clone -b tailscale_nodejs git@github.com:waqarwld/tailscale-ubuntu.git
+   cd tailscale-ubuntu
+   ```
+
+3. Create your secrets file and fill it in:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Required:
+
+   - `TS_AUTHKEY` — a Tailscale **node auth key** (starts with `tskey-auth-…`) from <https://login.tailscale.com/admin/settings/keys>. Make it **Reusable** if you may recreate the container.
+   - `TELEGRAM_BOT_TOKEN`, `DISCORD_BOT_TOKEN`, `DISCORD_GUILD_ID`, `DISCORD_FORUM_CHANNEL_ID` — see the Discord setup section above.
+
+   Optional: `TS_HOSTNAME`, `TS_EXTRA_ARGS`, `DISCORD_SUPPORT_ROLE_ID`, `TICKET_START_NUMBER`, `MAX_MESSAGE_LENGTH`.
+
+4. Build and start:
+
+   ```bash
+   docker compose up -d --build
+   ```
+
+5. Watch the logs:
+
+   ```bash
+   docker compose logs -f
+   ```
+
+### Notes
+
+- The container **crash-loops until the four bridge tokens are present** in `.env` — that's the signal to double-check them (`docker compose logs`).
+- The ticket counter lives in a named volume (`runtime:/app/runtime`), so ticket numbers survive container recreates.
+- Tailscale identity persists in the `tailscale-state` volume; the node appears under `TS_HOSTNAME` (default `ubuntu-node`) and is reachable over SSH from the tailnet.
+- `.env` is gitignored and never committed. `.gitattributes` pins LF line endings so `entrypoint.sh` runs on any OS clone.
+- Run only **one** bridge instance at a time (Telegram long polling needs a single consumer) — don't run the laptop copy and this container together.
