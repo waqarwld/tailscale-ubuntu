@@ -1,0 +1,28 @@
+services:
+  tailscale:
+    build: .
+    container_name: ubuntu-tailscale
+    privileged: true          # needed so tailscaled can create the TUN interface
+    restart: unless-stopped
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_HOSTNAME=${TS_HOSTNAME:-ubuntu-node}
+      # Optional extra args, e.g. to expose a local port on the tailnet:
+      # - TS_EXTRA_ARGS=--advertise-routes=192.168.1.0/24
+    env_file:
+      - .env
+    volumes:
+      - tailscale-state:/var/lib/tailscale   # keeps your node identity across restarts
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    healthcheck:
+      test: ["CMD", "tailscale", "ip", "-4"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  tailscale-state:
